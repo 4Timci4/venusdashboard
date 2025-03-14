@@ -207,8 +207,15 @@
             
             <!-- Page Content -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-                <!-- Bildirimler -->
-                <?php if (isset($messages) && !empty($messages)): ?>
+                <!-- Bildirimler - Ticket detay sayfasında gösterilmesin -->
+                <?php 
+                // URL yolunu kontrol et - hem ticket/view.php hem de views/tickets/view.php kontrol edilmeli
+                $isTicketViewPage = strpos($_SERVER['PHP_SELF'], 'ticket/view.php') !== false || 
+                                   strpos($_SERVER['PHP_SELF'], 'views/tickets/view.php') !== false;
+                
+                // Ticket görüntüleme sayfasındaysa bildirimleri hiç gösterme
+                if (isset($messages) && !empty($messages) && !$isTicketViewPage): 
+                ?>
                     <?php foreach ($messages as $key => $message): ?>
                         <div class="mb-4 p-4 rounded-lg <?= getAlertClass($message['type']) ?>">
                             <div class="flex items-center">

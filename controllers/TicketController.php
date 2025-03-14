@@ -153,6 +153,32 @@ class TicketController extends Controller {
             return;
         }
         
+        // Description içeriğini temizle (boş HTML etiketleri ve tekrarlanan başlık etiketlerini kaldır)
+        if (isset($_POST['description'])) {
+            // <h3> etiketlerinin sadece bir kez görünmesini sağla
+            $pattern = '/<h3>([^<]+)<\/h3>(\s*<h3>\1<\/h3>)+/i';
+            $_POST['description'] = preg_replace($pattern, '<h3>$1</h3>', $_POST['description']);
+            
+            // Boş <p><br></p> etiketlerini temizle
+            $_POST['description'] = preg_replace('/\s*<p>\s*(<br\s*\/?>)?\s*<\/p>\s*/i', '', $_POST['description']);
+            
+            // İçerik tamamen boşsa
+            if (empty(strip_tags($_POST['description']))) {
+                $_POST['description'] = '';
+            }
+        }
+        
+        // Etki detaylarını temizle
+        if (isset($_POST['impact_details'])) {
+            // Boş <p><br></p> etiketlerini temizle
+            $_POST['impact_details'] = preg_replace('/\s*<p>\s*(<br\s*\/?>)?\s*<\/p>\s*/i', '', $_POST['impact_details']);
+            
+            // İçerik tamamen boşsa
+            if (empty(strip_tags($_POST['impact_details']))) {
+                $_POST['impact_details'] = '';
+            }
+        }
+        
         // Form verilerini al
         $data = $this->getFormData([
             'user_id', 'request_type_id', 'status_id', 'service_id', 'technician_id',
@@ -392,6 +418,32 @@ class TicketController extends Controller {
             $this->setFlashMessage('error', 'Ticket bulunamadı.', 'error');
             $this->redirect(BASE_URL . '/tickets.php');
             return;
+        }
+        
+        // Description içeriğini temizle (boş HTML etiketleri ve tekrarlanan başlık etiketlerini kaldır)
+        if (isset($_POST['description'])) {
+            // <h3> etiketlerinin sadece bir kez görünmesini sağla
+            $pattern = '/<h3>([^<]+)<\/h3>(\s*<h3>\1<\/h3>)+/i';
+            $_POST['description'] = preg_replace($pattern, '<h3>$1</h3>', $_POST['description']);
+            
+            // Boş <p><br></p> etiketlerini temizle
+            $_POST['description'] = preg_replace('/\s*<p>\s*(<br\s*\/?>)?\s*<\/p>\s*/i', '', $_POST['description']);
+            
+            // İçerik tamamen boşsa
+            if (empty(strip_tags($_POST['description']))) {
+                $_POST['description'] = '';
+            }
+        }
+        
+        // Etki detaylarını temizle
+        if (isset($_POST['impact_details'])) {
+            // Boş <p><br></p> etiketlerini temizle
+            $_POST['impact_details'] = preg_replace('/\s*<p>\s*(<br\s*\/?>)?\s*<\/p>\s*/i', '', $_POST['impact_details']);
+            
+            // İçerik tamamen boşsa
+            if (empty(strip_tags($_POST['impact_details']))) {
+                $_POST['impact_details'] = '';
+            }
         }
         
         // Form verilerini al
@@ -717,8 +769,62 @@ class TicketController extends Controller {
             return;
         }
         
-        // Başarılı mesajı göster ve ticket detay sayfasına yönlendir
+        // Başarılı mesajı göster ve önce mevcut flash mesajlarını temizle
+        // Flash mesaj eklemeden önce aynı tipteki mevcut mesajları temizle
+        if (isset($_SESSION['flash_messages']) && isset($_SESSION['flash_messages']['success'])) {
+            unset($_SESSION['flash_messages']['success']);
+        }
+        
         $this->setFlashMessage('success', 'Ticket başarıyla kapatıldı.', 'success');
+        $this->redirect(BASE_URL . '/ticket/view.php?id=' . $id);
+    }
+    
+    /**
+     * Kapalı olan ticket'ı tekrar açar
+     */
+    public function reopen($id) {
+        // Giriş kontrolü
+        AuthHelper::requireLogin();
+        
+        // POST metoduyla gelmemişse ticket sayfasına yönlendir
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(BASE_URL . '/ticket/view.php?id=' . $id);
+            return;
+        }
+        
+        // CSRF token kontrolü
+        if (!isset($_POST['csrf_token']) || !$this->validateCsrfToken($_POST['csrf_token'])) {
+            $this->setFlashMessage('error', 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyin.', 'error');
+            $this->redirect(BASE_URL . '/ticket/view.php?id=' . $id);
+            return;
+        }
+        
+        // Ticket'ı yeniden aç (status_id = 1: Açık)
+        $result = $this->ticketModel->updateStatus($id, 1, AuthHelper::getUserId());
+        
+        if (!$result) {
+            $this->setFlashMessage('error', 'Ticket açılırken bir hata oluştu.', 'error');
+            $this->redirect(BASE_URL . '/ticket/view.php?id=' . $id);
+            return;
+        }
+        
+        // Aktivite logu oluştur
+        $logModel = new ActivityLog();
+        $logData = [
+            'user_id' => AuthHelper::getUserId(),
+            'ticket_id' => $id,
+            'action' => 'reopen_ticket',
+            'details' => 'Ticket yeniden açıldı'
+        ];
+        
+        $logModel->create($logData);
+        
+        // Başarılı mesajı göster ve önce mevcut flash mesajlarını temizle
+        if (isset($_SESSION['flash_messages']) && isset($_SESSION['flash_messages']['success'])) {
+            unset($_SESSION['flash_messages']['success']);
+        }
+        
+        $this->setFlashMessage('success', 'Ticket başarıyla yeniden açıldı.', 'success');
         $this->redirect(BASE_URL . '/ticket/view.php?id=' . $id);
     }
     

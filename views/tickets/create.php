@@ -1,7 +1,7 @@
 <!-- CSS Stil Tanımlamaları -->
 <style>
     .placeholder-indent::placeholder {
-        text-indent: 10px; /* Placeholder metinlerini 20px sağa kaydır */
+        text-indent: 10px; /* Placeholder metinlerini 10px sağa kaydır */
     }
 </style>
 
@@ -217,7 +217,7 @@
                         Etki Detayları
                     </label>
                     <textarea id="impact_details" name="impact_details" rows="3" 
-                            class="w-full rounded-lg border-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm transition-colors" 
+                            class="w-full rounded-lg border-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm transition-colors placeholder-indent" 
                             placeholder="Etkinin detaylarını açıklayın"></textarea>
                 </div>
             </div>
@@ -327,12 +327,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Form gönderilmeden önce Quill içeriğini gizli alana aktar
+    // Form gönderilmeden önce Quill içeriğini gizli alana aktar ve temizle
     var form = document.getElementById('ticket-form');
     var descriptionInput = document.getElementById('description');
     
     form.onsubmit = function() {
-        descriptionInput.value = quill.root.innerHTML;
+        // Quill içeriğini al
+        var content = quill.root.innerHTML;
+        
+        // İçerik sadece "<p><br></p>" veya benzeri boş içerik mi kontrol et
+        const isEmptyContent = /^\s*(<p>\s*(<br\s*\/?>)?\s*<\/p>\s*)*$/.test(content);
+        
+        // Eğer içerik boşsa, boş string olarak ayarla
+        if (isEmptyContent) {
+            descriptionInput.value = '';
+        } else {
+            descriptionInput.value = content;
+        }
+        
         return true;
     };
     

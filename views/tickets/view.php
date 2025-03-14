@@ -13,8 +13,16 @@
                 </a>
             <?php endif; ?>
             
-            <!-- Ticket Kapatma Butonu -->
-            <?php if ($ticket['status_id'] != 5): ?>
+            <!-- Ticket Kapatma/Açma Butonu -->
+            <?php if ($ticket['status_id'] == 6): ?>
+                <form action="<?= BASE_URL ?>/ticket/open.php" method="POST" class="inline" onsubmit="return confirm('Bu ticketı tekrar açmak istediğinize emin misiniz?');">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
+                    <input type="hidden" name="id" value="<?= $ticket['id'] ?>">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                        <i class="fas fa-folder-open mr-2"></i> Aç
+                    </button>
+                </form>
+            <?php else: ?>
                 <form action="<?= BASE_URL ?>/ticket/close.php" method="POST" class="inline" onsubmit="return confirm('Bu ticketı kapatmak istediğinize emin misiniz?');">
                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                     <input type="hidden" name="id" value="<?= $ticket['id'] ?>">
@@ -33,17 +41,34 @@
 
 <!-- Flash Mesajları -->
 <?php if (isset($messages) && !empty($messages)): ?>
-    <?php foreach ($messages as $type => $messageList): ?>
-        <?php foreach ($messageList as $message): ?>
-            <div class="mb-6 rounded-lg p-4 flex items-center animate__animated animate__fadeIn
-                <?= ($type === 'success') ? 'bg-green-100 border border-green-200 text-green-700' : 
-                    (($type === 'error') ? 'bg-red-100 border border-red-200 text-red-700' : 
-                    'bg-blue-100 border border-blue-200 text-blue-700') ?>">
-                <i class="fas <?= ($type === 'success') ? 'fa-check-circle' : 
-                    (($type === 'error') ? 'fa-exclamation-circle' : 'fa-info-circle') ?> mr-3 text-xl"></i>
-                <span><?= $message ?></span>
-            </div>
-        <?php endforeach; ?>
+    <?php 
+    // Gösterilen mesaj içeriklerini takip et
+    $shownMessages = [];
+    ?>
+    
+    <?php foreach ($messages as $key => $data): ?>
+        <?php 
+        // Mesaj içeriğini ve tipini al
+        $messageContent = isset($data['message']) ? $data['message'] : (is_string($data) ? $data : '');
+        $type = isset($data['type']) ? $data['type'] : 'info';
+        
+        // Boş mesajları veya daha önce gösterilenleri atla
+        if (empty($messageContent) || in_array($messageContent, $shownMessages)) {
+            continue;
+        }
+        
+        // Bu mesajı gösterildi olarak işaretle
+        $shownMessages[] = $messageContent;
+        ?>
+        
+        <div class="mb-6 rounded-lg p-4 flex items-center animate__animated animate__fadeIn
+            <?= ($type === 'success') ? 'bg-green-100 border border-green-200 text-green-700' : 
+                (($type === 'error') ? 'bg-red-100 border border-red-200 text-red-700' : 
+                'bg-blue-100 border border-blue-200 text-blue-700') ?>">
+            <i class="fas <?= ($type === 'success') ? 'fa-check-circle' : 
+                (($type === 'error') ? 'fa-exclamation-circle' : 'fa-info-circle') ?> mr-3 text-xl"></i>
+            <span><?= $messageContent ?></span>
+        </div>
     <?php endforeach; ?>
 <?php endif; ?>
 
@@ -96,15 +121,27 @@
                 <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
                     <h4 class="text-sm font-semibold text-gray-600 mb-2">Açıklama</h4>
                     <div class="prose max-w-none">
-                        <?= $ticket['description'] ?>
+                        <?php 
+                        // Boş <p></p> etiketlerini temizleyelim
+                        $description = trim($ticket['description']);
+                        if (!empty($description) && $description !== '<p></p>') {
+                            echo $description;
+                        } else {
+                            echo '<p class="text-gray-500 italic">Açıklama bulunmuyor.</p>';
+                        }
+                        ?>
                     </div>
                 </div>
                 
                 <!-- Etki Detayları (varsa) -->
-                <?php if (!empty($ticket['impact_details'])): ?>
+                <?php 
+                // Etki detaylarını kontrol et
+                $impactDetails = trim($ticket['impact_details'] ?? '');
+                if (!empty($impactDetails) && $impactDetails !== '<p></p>'): 
+                ?>
                 <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
                     <h4 class="text-sm font-semibold text-gray-600 mb-2">Etki Detayları</h4>
-                    <p class="text-gray-700"><?= nl2br(htmlspecialchars($ticket['impact_details'])) ?></p>
+                    <p class="text-gray-700"><?= nl2br(htmlspecialchars($impactDetails)) ?></p>
                 </div>
                 <?php endif; ?>
                 
