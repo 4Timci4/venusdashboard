@@ -1,0 +1,290 @@
+/**
+ * Venus IT Help Desk - Ana CSS Dosyası
+ */
+
+/* Özel fontlar */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Genel stil ayarları */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Ticket Durum Etiketleri */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-open {
+    background-color: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+}
+
+.status-assigned {
+    background-color: rgba(243, 156, 18, 0.15);
+    color: #f39c12;
+}
+
+.status-in-progress {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+}
+
+.status-pending {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+}
+
+.status-resolved {
+    background-color: rgba(39, 174, 96, 0.15);
+    color: #27ae60;
+}
+
+.status-closed {
+    background-color: rgba(127, 140, 141, 0.15);
+    color: #7f8c8d;
+}
+
+/* Öncelik İndikatörleri */
+.priority-indicator {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.priority-low {
+    background-color: #3498db;
+}
+
+.priority-medium {
+    background-color: #f39c12;
+}
+
+.priority-high {
+    background-color: #e74c3c;
+}
+
+.priority-critical {
+    background-color: #c0392b;
+}
+
+/* Quill editör özelleştirmeleri */
+.ql-toolbar.ql-snow {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    border-color: #e2e8f0;
+}
+
+.ql-container.ql-snow {
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    border-color: #e2e8f0;
+}
+
+/* Form öğeleri */
+.custom-input {
+    @apply w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500;
+}
+
+.custom-select {
+    @apply w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500;
+}
+
+/* Ticket detay sayfası */
+.ticket-info-item {
+    @apply flex flex-col space-y-1 mb-4;
+}
+
+.ticket-info-label {
+    @apply text-sm font-medium text-gray-500;
+}
+
+.ticket-info-value {
+    @apply font-medium text-gray-900;
+}
+
+/* Ticket listesi */
+.ticket-row {
+    @apply border-b border-gray-200 hover:bg-gray-50 transition-colors;
+}
+
+.ticket-row:last-child {
+    @apply border-b-0;
+}
+
+/* Dashboard kartları */
+.dashboard-stat-card {
+    @apply bg-white rounded-lg shadow p-6 border-t-4;
+}
+
+.dashboard-stat-card.primary {
+    @apply border-blue-500;
+}
+
+.dashboard-stat-card.secondary {
+    @apply border-purple-500;
+}
+
+.dashboard-stat-card.success {
+    @apply border-green-500;
+}
+
+.dashboard-stat-card.warning {
+    @apply border-yellow-500;
+}
+
+.dashboard-stat-card.danger {
+    @apply border-red-500;
+}
+
+/* Teknisyen ve kullanıcı kartları */
+.user-card {
+    @apply bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow;
+}
+
+.user-card-header {
+    @apply p-4 border-b border-gray-200;
+}
+
+.user-card-body {
+    @apply p-4;
+}
+
+.user-card-avatar {
+    @apply w-16 h-16 rounded-full mx-auto mb-3;
+}
+
+/* Yorum kutusu */
+.comment-box {
+    @apply bg-white rounded-lg border border-gray-200 p-4 mb-4;
+}
+
+.comment-header {
+    @apply flex items-center justify-between mb-2;
+}
+
+.comment-author {
+    @apply font-medium text-gray-900;
+}
+
+.comment-date {
+    @apply text-xs text-gray-500;
+}
+
+.comment-body {
+    @apply text-gray-700;
+}
+
+/* Zaman çizelgesi */
+.timeline {
+    @apply relative pl-8;
+}
+
+.timeline-item {
+    @apply relative pb-8;
+}
+
+.timeline-item:last-child {
+    @apply pb-0;
+}
+
+.timeline-item:before {
+    content: '';
+    @apply absolute left-0 top-0 -ml-3 h-full w-0.5 bg-gray-200;
+}
+
+.timeline-item:last-child:before {
+    @apply h-6;
+}
+
+.timeline-badge {
+    @apply absolute left-0 -ml-4 mt-1 w-6 h-6 rounded-full flex items-center justify-center;
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.3s ease-in-out;
+}
+
+/* Dönen ikon animasyonu */
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Tooltip */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: auto;
+    min-width: 120px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+}
+
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Responsive özelleştirmeler */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        @apply grid-cols-1;
+    }
+    
+    .ticket-info-grid {
+        @apply grid-cols-1;
+    }
+}
