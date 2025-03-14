@@ -170,6 +170,26 @@ class TicketController extends Controller {
             $data['status_id'] = 1; // Açık durumu
         }
         
+        // Eğer service_id boşsa null olarak ayarla
+        if (empty($data['service_id'])) {
+            $data['service_id'] = null;
+        }
+        
+        // Eğer technician_id boşsa null olarak ayarla
+        if (empty($data['technician_id'])) {
+            $data['technician_id'] = null;
+        }
+        
+        // Eğer category_id boşsa null olarak ayarla
+        if (empty($data['category_id'])) {
+            $data['category_id'] = null;
+        }
+        
+        // Eğer subcategory_id boşsa null olarak ayarla
+        if (empty($data['subcategory_id'])) {
+            $data['subcategory_id'] = null;
+        }
+        
         // Form doğrulama
         $errors = ValidationHelper::validate($data, [
             'user_id' => ['required' => true, 'integer' => true],

@@ -13,6 +13,13 @@ class Ticket extends Model {
         'description', 'impact', 'impact_details', 'activity', 'priority'
     ];
 
+    protected $db;
+    
+    public function __construct() {
+        require_once __DIR__ . '/../config/Database.php';
+        $this->db = Database::getInstance()->getConnection();
+    }
+
     /**
      * Detaylarıyla birlikte ticket getirir
      */

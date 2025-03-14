@@ -45,10 +45,22 @@ define('HASH_COST', 10); // Password hash cost
 
 // Dosya yükleme limitleri
 define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10 MB
-define('ALLOWED_EXTENSIONS', 'jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,txt,zip,rar');
+define('ALLOWED_FILE_TYPES', [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/plain',
+    'application/zip',
+    'application/x-rar-compressed'
+]);
 
 // Sayfalama ayarları
-define('ITEMS_PER_PAGE', 15);
+define('ITEMS_PER_PAGE', 10);
 
 // Kullanıcı rolleri
 define('ROLE_ADMIN', 1);
@@ -68,3 +80,9 @@ if (!file_exists(UPLOADS_PATH)) {
 
 // Veritabanı bağlantısını dahil et
 require_once 'database.php';
+
+// Veritabanı yapılandırması
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'venus_it_desk');
+define('DB_USER', 'root');
+define('DB_PASS', '');
