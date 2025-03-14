@@ -15,25 +15,41 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^$ index.php?route=dashboard [L,QSA]
 
 # Login sayfası
+RewriteRule ^login\.php$ index.php?route=login [L,QSA]
 RewriteRule ^login$ index.php?route=login [L,QSA]
 RewriteRule ^login_process$ index.php?route=login_process [L,QSA]
+RewriteRule ^login_process\.php$ index.php?route=login_process [L,QSA]
 RewriteRule ^logout$ index.php?route=logout [L,QSA]
+RewriteRule ^logout\.php$ index.php?route=logout [L,QSA]
 RewriteRule ^profile$ index.php?route=profile [L,QSA]
+RewriteRule ^profile\.php$ index.php?route=profile [L,QSA]
 RewriteRule ^profile_update$ index.php?route=profile_update [L,QSA]
+RewriteRule ^profile_update\.php$ index.php?route=profile_update [L,QSA]
 RewriteRule ^forgot_password$ index.php?route=forgot_password [L,QSA]
+RewriteRule ^forgot_password\.php$ index.php?route=forgot_password [L,QSA]
 RewriteRule ^forgot_password_process$ index.php?route=forgot_password_process [L,QSA]
+RewriteRule ^forgot_password_process\.php$ index.php?route=forgot_password_process [L,QSA]
 
 # Dashboard sayfaları
+RewriteRule ^dashboard\.php$ index.php?route=dashboard [L,QSA]
 RewriteRule ^dashboard$ index.php?route=dashboard [L,QSA]
 RewriteRule ^dashboard/user$ index.php?route=dashboard/user [L,QSA]
 RewriteRule ^dashboard/technician$ index.php?route=dashboard/technician [L,QSA]
 RewriteRule ^dashboard/reports$ index.php?route=dashboard/reports [L,QSA]
 
 # Ticket sayfaları
+RewriteRule ^tickets\.php$ index.php?route=tickets [L,QSA]
 RewriteRule ^tickets$ index.php?route=tickets [L,QSA]
+RewriteRule ^ticket/create\.php$ index.php?route=ticket/create [L,QSA]
 RewriteRule ^ticket/create$ index.php?route=ticket/create [L,QSA]
 RewriteRule ^ticket/store$ index.php?route=ticket/store [L,QSA]
+# URL: ticket/view.php?id=X için özel kural
+RewriteCond %{QUERY_STRING} ^id=([0-9]+)$
+RewriteRule ^ticket/view\.php$ index.php?route=ticket/view&id=%1 [L]
 RewriteRule ^ticket/view/([0-9]+)$ index.php?route=ticket/view&id=$1 [L,QSA]
+# URL: ticket/edit.php?id=X için özel kural
+RewriteCond %{QUERY_STRING} ^id=([0-9]+)$
+RewriteRule ^ticket/edit\.php$ index.php?route=ticket/edit&id=%1 [L]
 RewriteRule ^ticket/edit/([0-9]+)$ index.php?route=ticket/edit&id=$1 [L,QSA]
 RewriteRule ^ticket/update/([0-9]+)$ index.php?route=ticket/update&id=$1 [L,QSA]
 RewriteRule ^ticket/comment/([0-9]+)$ index.php?route=ticket/comment&id=$1 [L,QSA]
@@ -45,6 +61,7 @@ RewriteRule ^api/tickets/subcategories$ index.php?route=api/tickets/subcategorie
 RewriteRule ^api/tickets/status/([0-9]+)$ index.php?route=api/tickets/status&id=$1 [L,QSA]
 RewriteRule ^api/tickets/assign/([0-9]+)$ index.php?route=api/tickets/assign&id=$1 [L,QSA]
 RewriteRule ^api/auth/login$ index.php?route=api/auth/login [L,QSA]
+RewriteRule ^api/auth/login\.php$ index.php?route=api/auth/login [L,QSA]
 
 # Hata sayfaları
 ErrorDocument 404 /venus_it_desk/index.php?route=error/404

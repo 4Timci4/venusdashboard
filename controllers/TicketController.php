@@ -8,6 +8,15 @@
 require_once 'Controller.php';
 require_once BASE_PATH . '/models/Ticket.php';
 require_once BASE_PATH . '/models/User.php';
+require_once BASE_PATH . '/models/StatusType.php';
+require_once BASE_PATH . '/models/RequestType.php';
+require_once BASE_PATH . '/models/Service.php';
+require_once BASE_PATH . '/models/ServiceCategory.php';
+require_once BASE_PATH . '/models/SubCategory.php';
+require_once BASE_PATH . '/models/TicketComment.php';
+require_once BASE_PATH . '/models/TicketAttachment.php';
+require_once BASE_PATH . '/models/ActivityLog.php';
+require_once BASE_PATH . '/models/Technician.php';
 require_once BASE_PATH . '/helpers/AuthHelper.php';
 require_once BASE_PATH . '/helpers/ValidationHelper.php';
 require_once BASE_PATH . '/helpers/FileHelper.php';

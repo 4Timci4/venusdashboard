@@ -17,15 +17,25 @@ require_once 'controllers/DashboardController.php';
 require_once 'controllers/AuthController.php';
 require_once 'controllers/TicketController.php';
 
-// Kullanıcı giriş kontrolü - giriş sayfası hariç tüm sayfalar için gerekli
-$publicPages = ['login.php', 'register.php', 'forgot_password.php', 'api/auth/login.php'];
-$currentPage = basename($_SERVER['REQUEST_URI']);
-$currentPage = strpos($currentPage, '?') !== false ? substr($currentPage, 0, strpos($currentPage, '?')) : $currentPage;
+// Oturum başlat (eğer daha önce başlatılmamışsa)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if (!in_array($currentPage, $publicPages) && !AuthHelper::isLoggedIn()) {
-    // Kullanıcı giriş yapmamışsa login sayfasına yönlendir
-    $authController = new AuthController();
-    $authController->showLoginForm();
+// Login process dosyasını doğrudan çağırma (özel durum)
+if ($_SERVER['REQUEST_URI'] === '/login_process.php' || $_SERVER['REQUEST_URI'] === '/venus_it_desk/login_process.php') {
+    include 'login_process.php';
+    exit;
+}
+
+// Kullanıcı giriş kontrolü - login sayfası hariç tüm sayfalar için gerekli
+$page = isset($_GET['page']) ? $_GET['page'] : '';
+
+// Eğer kullanıcı giriş yapmamışsa ve login sayfasında değilse login sayfasına yönlendir
+if ($page !== 'login' && !isset($_SESSION['user_id'])) {
+    // AuthController'ı kullanarak login sayfasını göster
+    $controller = new AuthController();
+    $controller->showLoginForm();
     exit;
 }
 

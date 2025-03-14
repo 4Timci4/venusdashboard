@@ -14,9 +14,6 @@
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
-    
     <style>
         .login-bg {
             background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
@@ -50,17 +47,18 @@
                 
                 <div class="p-6">
                     <!-- Hata mesajı -->
-                    <?php if (isset($error)): ?>
+                    <?php if (isset($_SESSION['login_error'])): ?>
                         <div class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
                             <div class="flex items-center">
                                 <i class="fas fa-exclamation-circle mr-2"></i>
-                                <p><?= $error['message'] ?></p>
+                                <p><?= $_SESSION['login_error'] ?></p>
                             </div>
                         </div>
+                        <?php unset($_SESSION['login_error']); ?>
                     <?php endif; ?>
                     
                     <!-- Login formu -->
-                    <form action="<?= BASE_URL ?>/login_process.php" method="POST" id="login-form">
+                    <form action="<?= BASE_URL ?>/login_process.php" method="POST">
                         <!-- CSRF token -->
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
                         
@@ -97,7 +95,10 @@
                                 </label>
                             </div>
                             
-                            <div class="text-sm">
+                            <div class="text-sm flex space-x-4">
+                                <a href="<?= BASE_URL ?>/register.php" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-user-plus mr-1"></i> Kayıt Ol
+                                </a>
                                 <a href="<?= BASE_URL ?>/forgot_password.php" class="text-blue-600 hover:text-blue-800">
                                     Şifremi unuttum
                                 </a>
@@ -119,65 +120,6 @@
         </div>
     </div>
     
-    <!-- JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
-    
-    <script>
-        // AJAX form gönderimi
-        $(document).ready(function() {
-            $('#login-form').on('submit', function(e) {
-                e.preventDefault();
-                
-                $.ajax({
-                    type: 'POST',
-                    url: '<?= BASE_URL ?>/api/auth/login.php',
-                    data: $(this).serialize(),
-                    dataType: 'json',
-                    beforeSend: function() {
-                        // Buton durumunu güncelle
-                        $('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-2"></i> Giriş yapılıyor...');
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Başarılı giriş
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Giriş Başarılı!',
-                                text: response.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(function() {
-                                window.location.href = response.redirect;
-                            });
-                        } else {
-                            // Hata durumu
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Giriş Başarısız',
-                                text: response.message
-                            });
-                            
-                            // Butonu eski haline getir
-                            $('button[type="submit"]').prop('disabled', false).html('<i class="fas fa-sign-in-alt mr-2"></i> Giriş Yap');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // AJAX hata durumu
-                        console.error(xhr.responseText);
-                        
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Bağlantı Hatası',
-                            text: 'Sunucuya bağlanırken bir hata oluştu. Lütfen tekrar deneyin.'
-                        });
-                        
-                        // Butonu eski haline getir
-                        $('button[type="submit"]').prop('disabled', false).html('<i class="fas fa-sign-in-alt mr-2"></i> Giriş Yap');
-                    }
-                });
-            });
-        });
-    </script>
+    <!-- JavaScript - Basit login formu için script gerekmez -->
 </body>
 </html>

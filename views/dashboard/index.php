@@ -296,63 +296,71 @@ foreach ($categoryStats as $category) {
 <?php $extraScripts = '
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Canvas elementlerinin var olup olmadığını kontrol et
+    const statusChartElement = document.getElementById("statusChart");
+    const categoryChartElement = document.getElementById("categoryChart");
+    
     // Durum pasta grafiği
-    const statusCtx = document.getElementById("statusChart").getContext("2d");
-    const statusChart = new Chart(statusCtx, {
-        type: "doughnut",
-        data: {
-            labels: ' . json_encode($statusLabels) . ',
-            datasets: [{
-                data: ' . json_encode($statusData) . ',
-                backgroundColor: ' . json_encode($statusColors) . ',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: "right",
-                    labels: {
-                        padding: 20,
-                        boxWidth: 10
+    if (statusChartElement) {
+        const statusCtx = statusChartElement.getContext("2d");
+        const statusChart = new Chart(statusCtx, {
+            type: "doughnut",
+            data: {
+                labels: ' . json_encode($statusLabels) . ',
+                datasets: [{
+                    data: ' . json_encode($statusData) . ',
+                    backgroundColor: ' . json_encode($statusColors) . ',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "right",
+                        labels: {
+                            padding: 20,
+                            boxWidth: 10
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
     
     // Kategori çubuk grafiği
-    const categoryCtx = document.getElementById("categoryChart").getContext("2d");
-    const categoryChart = new Chart(categoryCtx, {
-        type: "bar",
-        data: {
-            labels: ' . json_encode($categoryLabels) . ',
-            datasets: [{
-                label: "Ticket Sayısı",
-                data: ' . json_encode($categoryData) . ',
-                backgroundColor: "rgba(59, 130, 246, 0.8)",
-                borderColor: "rgba(59, 130, 246, 1)",
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    precision: 0
-                }
+    if (categoryChartElement) {
+        const categoryCtx = categoryChartElement.getContext("2d");
+        const categoryChart = new Chart(categoryCtx, {
+            type: "bar",
+            data: {
+                labels: ' . json_encode($categoryLabels) . ',
+                datasets: [{
+                    label: "Ticket Sayısı",
+                    data: ' . json_encode($categoryData) . ',
+                    backgroundColor: "rgba(59, 130, 246, 0.8)",
+                    borderColor: "rgba(59, 130, 246, 1)",
+                    borderWidth: 1
+                }]
             },
-            plugins: {
-                legend: {
-                    display: false
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 </script>
 '; ?>
 

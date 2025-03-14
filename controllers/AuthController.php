@@ -101,9 +101,9 @@ class AuthController extends Controller {
      * Ajax ile kullanıcı girişi
      */
     public function ajaxLogin() {
-        // Sadece POST ve AJAX istekleri kabul edilir
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SERVER['HTTP_X_REQUESTED_WITH']) || $_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest') {
-            $this->json(['success' => false, 'message' => 'Geçersiz istek.'], 400);
+        // Sadece POST istekleri kabul edilir
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'message' => 'Geçersiz istek. Sadece POST istekleri kabul edilir.'], 400);
             return;
         }
         
@@ -222,6 +222,103 @@ class AuthController extends Controller {
             'error' => $this->getFlashMessage('profile_error'),
             'success' => $this->getFlashMessage('profile_success')
         ]);
+    }
+    
+    /**
+     * Kayıt formunu gösterir
+     */
+    public function showRegisterForm() {
+        // Kullanıcı zaten giriş yapmışsa ana sayfaya yönlendir
+        if (AuthHelper::isLoggedIn()) {
+            $this->redirect(BASE_URL . '/index.php');
+            return;
+        }
+        
+        // CSRF token oluştur
+        $csrf_token = $this->getCsrfToken();
+        
+        // Kayıt formunu göster
+        $this->view('auth/register', [
+            'csrf_token' => $csrf_token,
+            'error' => $this->getFlashMessage('register_error')
+        ]);
+    }
+    
+    /**
+     * Yeni kullanıcı kaydı oluşturur
+     */
+    public function register() {
+        // POST metoduyla gelmemişse kayıt sayfasına yönlendir
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(BASE_URL . '/register.php');
+            return;
+        }
+        
+        // CSRF token kontrolü
+        if (!isset($_POST['csrf_token']) || !$this->validateCsrfToken($_POST['csrf_token'])) {
+            $this->setFlashMessage('register_error', 'Güvenlik doğrulaması başarısız oldu. Lütfen tekrar deneyin.', 'error');
+            $this->redirect(BASE_URL . '/register.php');
+            return;
+        }
+        
+        // Form verilerini al
+        $data = $this->getFormData(['full_name', 'email', 'username', 'department', 'password', 'confirm_password']);
+        
+        // Form doğrulama
+        $errors = ValidationHelper::validate($data, [
+            'full_name' => ['required' => true],
+            'email' => ['required' => true, 'email' => true],
+            'username' => ['required' => true],
+            'department' => ['required' => true],
+            'password' => ['required' => true, 'minLength' => 8, 'strongPassword' => true],
+            'confirm_password' => ['required' => true, 'match' => 'password']
+        ]);
+        
+        if (!empty($errors)) {
+            $errorMessage = 'Lütfen tüm zorunlu alanları doldurun ve geçerli bir e-posta adresi girin. ';
+            $errorMessage .= 'Şifre en az 8 karakter olmalı ve şifreler eşleşmelidir.';
+            
+            $this->setFlashMessage('register_error', $errorMessage, 'error');
+            $this->redirect(BASE_URL . '/register.php');
+            return;
+        }
+        
+        // Kullanıcı adı kullanılabilir mi kontrol et
+        if ($this->userModel->getByUsername($data['username'])) {
+            $this->setFlashMessage('register_error', 'Bu kullanıcı adı zaten kullanılıyor. Lütfen başka bir kullanıcı adı seçin.', 'error');
+            $this->redirect(BASE_URL . '/register.php');
+            return;
+        }
+        
+        // E-posta kullanılabilir mi kontrol et
+        if ($this->userModel->getByEmail($data['email'])) {
+            $this->setFlashMessage('register_error', 'Bu e-posta adresi zaten kullanılıyor. Lütfen başka bir e-posta adresi kullanın.', 'error');
+            $this->redirect(BASE_URL . '/register.php');
+            return;
+        }
+        
+        // Kullanıcı verilerini oluştur
+        $userData = [
+            'username' => $data['username'],
+            'password' => $data['password'], // Model içinde hash'lenecek
+            'email' => $data['email'],
+            'full_name' => $data['full_name'],
+            'department' => $data['department'],
+            'role_id' => 3 // Varsayılan Kullanıcı rolü (ID: 3)
+        ];
+        
+        // Kullanıcıyı oluştur
+        $userId = $this->userModel->create($userData);
+        
+        if ($userId) {
+            // Başarılı kayıt
+            $this->setFlashMessage('success', 'Hesabınız başarıyla oluşturuldu. Şimdi giriş yapabilirsiniz.', 'success');
+            $this->redirect(BASE_URL . '/login.php');
+        } else {
+            // Başarısız kayıt
+            $this->setFlashMessage('register_error', 'Hesap oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+            $this->redirect(BASE_URL . '/register.php');
+        }
     }
     
     /**
