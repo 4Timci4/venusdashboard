@@ -30,7 +30,7 @@
 <body class="bg-gray-100 font-sans">
     <div class="flex h-screen">
         <!-- Sidebar - Sol Menü -->
-        <aside class="bg-gray-800 text-white w-64 flex-shrink-0 hidden md:block">
+<aside class="bg-gray-800 text-white w-64 flex-shrink-0 hidden md:block flex flex-col h-full">
             <div class="p-4 border-b border-gray-700">
                 <h1 class="text-xl font-bold">
                     <i class="fas fa-laptop-medical mr-2"></i>
@@ -38,7 +38,7 @@
                 </h1>
             </div>
             
-            <nav class="mt-4">
+    <nav class="mt-4 flex-1">
                 <ul>
                     <!-- Dashboard -->
                     <li class="mb-2">
@@ -103,7 +103,20 @@
                             Raporlar
                         </a>
                     </li>
-                    <?php endif; ?>
+            <?php endif; ?>
+                    
+                    <!-- Ayırıcı çizgi -->
+                    <li class="mt-auto pt-6">
+                        <div class="border-t border-gray-700 mb-4"></div>
+                    </li>
+                    
+                    <!-- Çıkış Yap butonu -->
+                    <li class="mb-2">
+                        <a href="<?= BASE_URL ?>/logout.php" class="flex items-center px-4 py-2 text-red-400 hover:bg-gray-700 hover:text-red-300 rounded">
+                            <i class="fas fa-sign-out-alt mr-3"></i>
+                            Çıkış Yap
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -201,6 +214,18 @@
                             </a>
                         </li>
                         <?php endif; ?>
+                        
+                        <!-- Ayırıcı çizgi -->
+                        <li class="mt-3 mb-1">
+                            <div class="border-t border-gray-700 mt-2 mb-2"></div>
+                        </li>
+                        
+                        <!-- Çıkış Yap butonu -->
+                        <li>
+                            <a href="<?= BASE_URL ?>/logout.php" class="block px-4 py-2 text-red-400 hover:bg-gray-700">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Çıkış Yap
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
